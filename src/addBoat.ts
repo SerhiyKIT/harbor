@@ -12,13 +12,16 @@ export const AddBoat = (
     newBoatState: IBoat,
     updateHarbor: (boatType: Boat, harborId: number) => void,
     updateConectHarbor: (harborId: number, status: boolean) => void,
-    searchFullHarbor: number,
-    searchEmptyHarbor: number,
+    searchFullHarbor: () => number | null,
+    searchEmptyHarbor: () => number | null,
     readTurn: IBoat[],
     greenTurn: IBoat[],
     moveId: number | undefined,
     deleteReadTurn: (id: number) => void,
-    deleteGreenTurn: (id: number) => void
+    deleteGreenTurn: (id: number) => void,
+    updateTurnOut: (boatType: Boat, status: boolean) => void,
+    readTurnOut: () => boolean,
+    greenTurnOut: () => boolean
 ) => {
     const { id, type, full } = newBoatState;
     const {
@@ -48,9 +51,11 @@ export const AddBoat = (
 
     app.stage.addChild(boat);
 
-    const harborId = type === Boat.GREAN ? searchFullHarbor : searchEmptyHarbor;
+    const harborId = type === Boat.GREAN ? searchFullHarbor() : searchEmptyHarbor();
+    console.log(harborId);
 
-    const moveToHarborY = heightHarborMax * harborId + heightHarborMax / 2 - boatY - heightHarborMax / 4;
+
+    const moveToHarborY = heightHarborMax * harborId! + heightHarborMax / 2 - boatY - heightHarborMax / 4;
 
     const returnFromTurn = (moveId: number) => {
         if (moveId === id) {
@@ -74,8 +79,8 @@ export const AddBoat = (
         new Tween(boat)
             .onComplete(() => {
                 if (type === Boat.GREAN) {
-                    switch (searchFullHarbor) {
-                        case -1:
+                    switch (searchFullHarbor()) {
+                        case null:
                             moveToTurn();
                             break;
 
@@ -85,8 +90,8 @@ export const AddBoat = (
                     }
                 }
                 if (type === Boat.READ) {
-                    switch (searchEmptyHarbor) {
-                        case -1:
+                    switch (searchEmptyHarbor()) {
+                        case null:
                             moveToTurn();
                             break;
 
@@ -112,14 +117,16 @@ export const AddBoat = (
         new Tween(boat)
             .to({ y: moveToHarborY, x: moveToHarborX }, 1000)
             .onComplete(() => {
-                updateHarbor(type, harborId);
-                updateConectHarbor(harborId, true);
+                updateHarbor(type, harborId!);
+                updateConectHarbor(harborId!, true);
                 if (type === Boat.GREAN) {
                     boat.fill(0x4de62e)
                     boat.stroke({ width: 5, color: color, alignment: 1 })
+                    updateTurnOut(Boat.GREAN, false);
                 } else {
                     boat.fill(0x4245f5)
                     boat.stroke({ width: 5, color: color, alignment: 1 })
+                    updateTurnOut(Boat.READ, false);
                 }
                 setTimeout(() => {
                     moveToFenceBackX();
@@ -133,7 +140,7 @@ export const AddBoat = (
             .to({ x: moveToFenceX }, 1000)
             .onComplete(() => {
                 moveToFenceBackY();
-                updateConectHarbor(harborId, false);
+                updateConectHarbor(harborId!, false);
                 if (moveId !== undefined) {
                     returnFromTurn(moveId);
                 }
@@ -179,17 +186,19 @@ export const AddBoat = (
 
     app.ticker.add(() => {
         if (type === Boat.GREAN && greenTurn.length > 0) {
-            if (greenTurn[0].id === id && searchFullHarbor !== -1) {
+            if (greenTurn[0].id === id && searchFullHarbor() !== null && greenTurnOut() === false) {
                 start();
                 deleteGreenTurn(id);
                 turnMove();
+                updateTurnOut(Boat.GREAN, true);
             }
         }
         if (type === Boat.READ && readTurn.length > 0) {
-            if (readTurn[0].id === id && searchEmptyHarbor !== -1) {
+            if (readTurn[0].id === id && searchEmptyHarbor() !== null && readTurnOut() === false) {
                 start();
                 deleteReadTurn(id);
                 turnMove();
+                updateTurnOut(Boat.READ, true);
             }
         }
     })
