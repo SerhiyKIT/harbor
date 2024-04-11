@@ -29,8 +29,11 @@ import { Constant } from './constant/constant';
         arrayHarbor
     }
 
+
     const readTurn: IBoat[] = [];
     const greenTurn: IBoat[] = [];
+    let readTurnOut = false;
+    let greenTurnOut = false;
 
     const deleteReadTurn = (id: number) => {
         const index = readTurn.findIndex((boat) => boat.id === id);
@@ -40,6 +43,14 @@ import { Constant } from './constant/constant';
     const deleteGreenTurn = (id: number) => {
         const index = greenTurn.findIndex((boat) => boat.id === id);
         greenTurn.splice(index, 1);
+    }
+
+    const updateTurnOut = (boatType: Boat, status: boolean) => {
+        if (boatType === Boat.READ) {
+            readTurnOut = status;
+        } else {
+            greenTurnOut = status;
+        }
     }
 
     const { heightHarbor, harborX, widthHarbor, heightHarborMax } = Constant(state);
@@ -109,7 +120,7 @@ import { Constant } from './constant/constant';
             return 3;
         }
         else {
-            return -1;
+            return null;
         }
     }
 
@@ -127,7 +138,7 @@ import { Constant } from './constant/constant';
             return 3;
         }
         else {
-            return -1;
+            return null;
         }
     }
 
@@ -227,7 +238,7 @@ import { Constant } from './constant/constant';
     }
 
     const moveId = () => {
-        if (searchEmptyHarbor() !== -1) {
+        if (searchEmptyHarbor() !== null) {
             if (readTurn.length > 0) {
                 return readTurn[0].id;
             }
@@ -236,6 +247,14 @@ import { Constant } from './constant/constant';
                 return greenTurn[0].id;
             }
         }
+    }
+
+    const funcReadTurnOut = () => {
+        return readTurnOut;
+    }
+
+    const funcGreenTurnOut = () => {
+        return greenTurnOut;
     }
 
     const creatBoat = setInterval(() => {
@@ -251,18 +270,20 @@ import { Constant } from './constant/constant';
             boat,
             updateHarbor,
             updateConectHarbor,
-            searchFullHarbor(),
-            searchEmptyHarbor(),
+            searchFullHarbor,
+            searchEmptyHarbor,
             readTurn,
             greenTurn,
             moveId(),
             deleteReadTurn,
-            deleteGreenTurn
+            deleteGreenTurn,
+            updateTurnOut,
+            funcReadTurnOut,
+            funcGreenTurnOut,
         );
     }, 8000);
 
     app.ticker.add(() => {
-
         update();
     });
 
