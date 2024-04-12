@@ -5,9 +5,15 @@ import { StatusHarbor } from '../interface/enum';
 
 export const Constant = (state: IInitialState) => {
 
-    const { arrayBoat, arrayFence, arrayHarbor } = state;
+    const { arrayFence, arrayHarbor } = state;
     const screenHeight = window.innerHeight;
     const screenWidth = window.innerWidth;
+
+    //Color 
+    const green = 0x4de62e;
+    const read = 0xdb1f2b;
+    const blue = 0x4245f5;
+    const yellow = 0xffff00;
 
 
     //Harbor
@@ -62,6 +68,10 @@ export const Constant = (state: IInitialState) => {
     }
 
     return {
+        green,
+        read,
+        blue,
+        yellow,
         screenHeight,
         screenWidth,
         heightHarborMax,
