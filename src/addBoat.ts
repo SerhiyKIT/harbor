@@ -21,7 +21,9 @@ export const AddBoat = (
     deleteGreenTurn: (id: number) => void,
     updateTurnOut: (boatType: Boat, status: boolean) => void,
     readTurnOut: () => boolean,
-    greenTurnOut: () => boolean
+    greenTurnOut: () => boolean,
+    turnUpdate: () => boolean,
+    setTurnUpdate: (status: boolean) => void
 ) => {
     const { id, type, full } = newBoatState;
     const {
@@ -195,7 +197,10 @@ export const AddBoat = (
                 start(searchFullHarbor()!);
                 deleteGreenTurn(id);
                 updateTurnOut(Boat.GREAN, true);
-                turnMove()
+                setTurnUpdate(true);
+            } else if (greenTurn.find(({ id }) => id === id) && turnUpdate()) {
+                moveToTurn();
+                setTurnUpdate(false);
             }
         }
         if (type === Boat.READ && readTurn.length > 0) {
@@ -203,7 +208,10 @@ export const AddBoat = (
                 start(searchEmptyHarbor()!);
                 deleteReadTurn(id);
                 updateTurnOut(Boat.READ, true);
-                turnMove()
+                setTurnUpdate(true);
+            } else if (readTurn.find(({ id }) => id === id) && turnUpdate()) {
+                moveToTurn();
+                setTurnUpdate(false);
             }
         }
     })

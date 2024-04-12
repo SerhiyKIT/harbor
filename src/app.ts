@@ -34,6 +34,7 @@ import { Constant } from './constant/constant';
     const greenTurn: IBoat[] = [];
     let readTurnOut = false;
     let greenTurnOut = false;
+    let turnUpdate = false;
 
     const deleteReadTurn = (id: number) => {
         const index = readTurn.findIndex((boat) => boat.id === id);
@@ -280,6 +281,7 @@ import { Constant } from './constant/constant';
             updateTurnOut,
             funcReadTurnOut,
             funcGreenTurnOut,
+            turnUpdate,
         );
     }, 8000);
 
