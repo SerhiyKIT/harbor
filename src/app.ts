@@ -29,11 +29,19 @@ import { Constant } from './constant/constant';
         arrayHarbor
     }
 
-
     const readTurn: IBoat[] = [];
     const greenTurn: IBoat[] = [];
     let readTurnOut = false;
     let greenTurnOut = false;
+    let turnUpdate = false;
+
+    const returnTurnUpdate = () => {
+        return turnUpdate;
+    }
+
+    const setTurnUpdate = (status: boolean) => {
+        turnUpdate = status;
+    };
 
     const deleteReadTurn = (id: number) => {
         const index = readTurn.findIndex((boat) => boat.id === id);
@@ -53,7 +61,7 @@ import { Constant } from './constant/constant';
         }
     }
 
-    const { heightHarbor, harborX, widthHarbor, heightHarborMax } = Constant(state);
+    const { yellow, heightHarbor, harborX, widthHarbor, heightHarborMax } = Constant(state);
 
     console.log(state);
 
@@ -87,19 +95,19 @@ import { Constant } from './constant/constant';
 
     harbor1.rect(harborX, harborY(0), widthHarbor, heightHarbor)
     harbor1.fill(0x4245f5)
-    harbor1.stroke({ width: 5, color: 0xffff00, alignment: 1 })
+    harbor1.stroke({ width: 5, color: yellow, alignment: 1 })
 
     harbor2.rect(harborX, harborY(1), widthHarbor, heightHarbor)
     harbor2.fill(0x4245f5)
-    harbor2.stroke({ width: 5, color: 0xffff00, alignment: 1 })
+    harbor2.stroke({ width: 5, color: yellow, alignment: 1 })
 
     harbor3.rect(harborX, harborY(2), widthHarbor, heightHarbor)
     harbor3.fill(0x4245f5)
-    harbor3.stroke({ width: 5, color: 0xffff00, alignment: 1 })
+    harbor3.stroke({ width: 5, color: yellow, alignment: 1 })
 
     harbor4.rect(harborX, harborY(3), widthHarbor, heightHarbor)
     harbor4.fill(0x4245f5)
-    harbor4.stroke({ width: 5, color: 0xffff00, alignment: 1 })
+    harbor4.stroke({ width: 5, color: yellow, alignment: 1 })
 
     app.stage.addChild(harbor1);
     app.stage.addChild(harbor2);
@@ -165,7 +173,7 @@ import { Constant } from './constant/constant';
         harbor1.clear();
         harbor1.rect(harborX, harborY(0), widthHarbor, heightHarbor)
         harbor1.fill(color)
-        harbor1.stroke({ width: 5, color: 0xffff00, alignment: 1 })
+        harbor1.stroke({ width: 5, color: yellow, alignment: 1 })
         harbor1Full = status;
         updateConectHarbor(0, true);
         app.stage.addChild(harbor1)
@@ -175,7 +183,7 @@ import { Constant } from './constant/constant';
         harbor2.clear();
         harbor2.rect(harborX, harborY(1), widthHarbor, heightHarbor)
         harbor2.fill(color)
-        harbor2.stroke({ width: 5, color: 0xffff00, alignment: 1 })
+        harbor2.stroke({ width: 5, color: yellow, alignment: 1 })
         harbor2Full = status;
         updateConectHarbor(1, true);
         app.stage.addChild(harbor2)
@@ -185,7 +193,7 @@ import { Constant } from './constant/constant';
         harbor3.clear();
         harbor3.rect(harborX, harborY(2), widthHarbor, heightHarbor)
         harbor3.fill(color)
-        harbor3.stroke({ width: 5, color: 0xffff00, alignment: 1 })
+        harbor3.stroke({ width: 5, color: yellow, alignment: 1 })
         harbor3Full = status;
         updateConectHarbor(2, true);
         app.stage.addChild(harbor3)
@@ -195,7 +203,7 @@ import { Constant } from './constant/constant';
         harbor4.clear();
         harbor4.rect(harborX, harborY(3), widthHarbor, heightHarbor)
         harbor4.fill(color)
-        harbor4.stroke({ width: 5, color: 0xffff00, alignment: 1 })
+        harbor4.stroke({ width: 5, color: yellow, alignment: 1 })
         harbor4Full = status;
         updateConectHarbor(3, true);
         app.stage.addChild(harbor4)
@@ -205,16 +213,16 @@ import { Constant } from './constant/constant';
         if (boatType === Boat.READ) {
             switch (harborId) {
                 case 0:
-                    updateHarbor1(0xffff00, true);
+                    updateHarbor1(yellow, true);
                     break;
                 case 1:
-                    updateHarbor2(0xffff00, true);
+                    updateHarbor2(yellow, true);
                     break;
                 case 2:
-                    updateHarbor3(0xffff00, true);
+                    updateHarbor3(yellow, true);
                     break;
                 case 3:
-                    updateHarbor4(0xffff00, true);
+                    updateHarbor4(yellow, true);
                     break;
             }
         }
@@ -280,6 +288,8 @@ import { Constant } from './constant/constant';
             updateTurnOut,
             funcReadTurnOut,
             funcGreenTurnOut,
+            returnTurnUpdate,
+            setTurnUpdate,
         );
     }, 8000);
 

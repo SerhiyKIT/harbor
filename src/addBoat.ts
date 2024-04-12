@@ -21,17 +21,28 @@ export const AddBoat = (
     deleteGreenTurn: (id: number) => void,
     updateTurnOut: (boatType: Boat, status: boolean) => void,
     readTurnOut: () => boolean,
-    greenTurnOut: () => boolean
+    greenTurnOut: () => boolean,
+    returnTurnUpdate: () => boolean,
+    setTurnUpdate: (status: boolean) => void
 ) => {
     const { id, type, full } = newBoatState;
     const {
-        heightBoat, boatX, widthBoat, screenHeight, screenWidth,
-        heightHarborMax, widthFence, fenceX,
+        green,
+        read,
+        blue,
+        heightBoat,
+        boatX,
+        widthBoat,
+        screenHeight,
+        screenWidth,
+        heightHarborMax,
+        widthFence,
+        fenceX,
     } = Constant(state);
 
-    const color = type === Boat.GREAN ? 0x4de62e : 0xdb1f2b;
+    const color = type === Boat.GREAN ? green : read;
     const boatY = type === Boat.GREAN ? screenHeight / 2.7 : screenHeight / 1.7;
-    const boatColorFull = full ? color : 0x4245f5;
+    const boatColorFull = full ? color : blue;
 
     const moveToFenceX = -((fenceX * 3) + 10)
     const moveToHarborX = -(screenWidth - 220)
@@ -61,20 +72,20 @@ export const AddBoat = (
 
     const returnFromTurn = (moveId: number, harborId: number) => {
         if (moveId === id) {
-            start(harborId);
+            start(harborId, 1000);
         }
     }
 
-    const start = (harborId: number | null) => {
+    const start = (harborId: number | null, time: number) => {
         new Tween(boat)
-            .to({ x: moveToTurnX, y: 0 }, 4000)
+            .to({ x: moveToTurnX, y: 0 }, time)
             .easing(Easing.Quadratic.InOut)
             .onComplete(() => {
                 findHarbor(harborId);
             })
             .start();
     }
-    start(firstHarborId);
+    start(firstHarborId, 4000);
 
     const findHarbor = (harborId: number | null) => {
         new Tween(boat)
@@ -125,11 +136,11 @@ export const AddBoat = (
                 updateHarbor(type, harborId);
                 updateConectHarbor(harborId, true);
                 if (type === Boat.GREAN) {
-                    boat.fill(0x4de62e)
+                    boat.fill(green)
                     boat.stroke({ width: 5, color: color, alignment: 1 })
                     updateTurnOut(Boat.GREAN, false);
                 } else {
-                    boat.fill(0x4245f5)
+                    boat.fill(blue)
                     boat.stroke({ width: 5, color: color, alignment: 1 })
                     updateTurnOut(Boat.READ, false);
                 }
@@ -189,21 +200,26 @@ export const AddBoat = (
             .start();
     }
 
+    //Fix this
     app.ticker.add(() => {
         if (type === Boat.GREAN && greenTurn.length > 0) {
             if (greenTurn[0].id === id && searchFullHarbor() !== null && greenTurnOut() === false) {
-                start(searchFullHarbor()!);
+                start(searchFullHarbor()!, 1000);
                 deleteGreenTurn(id);
                 updateTurnOut(Boat.GREAN, true);
-                turnMove()
+                setTurnUpdate(true);
+            } else if (greenTurn.find(({ id }) => id === id) && returnTurnUpdate()) {
+                setTurnUpdate(false);
             }
         }
         if (type === Boat.READ && readTurn.length > 0) {
             if (readTurn[0].id === id && searchEmptyHarbor() !== null && readTurnOut() === false) {
-                start(searchEmptyHarbor()!);
+                start(searchEmptyHarbor()!, 1000);
                 deleteReadTurn(id);
                 updateTurnOut(Boat.READ, true);
-                turnMove()
+                setTurnUpdate(true);
+            } else if (readTurn.find(({ id }) => id === id) && returnTurnUpdate()) {
+                setTurnUpdate(false);
             }
         }
     })
